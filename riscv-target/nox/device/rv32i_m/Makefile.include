@@ -36,7 +36,7 @@ COMPILE_TARGET=\
         fi ;
 
 RUN_CMD=\
-	$(TARGET_SIM) -s 1000 -e $<
+	$(TARGET_SIM) -s 200000 -e $< +signature=$(*).signature.output
 
 RUN_TARGET=\
 	$(RUN_CMD)

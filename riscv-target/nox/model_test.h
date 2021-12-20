@@ -11,9 +11,9 @@
         .align 8; .global end_regstate; end_regstate:                   \
         .word 4;
 
-#define	DRAM_BASE_ADDR			0x10000000
-#define	ADDR_1MiB			0x00100000
-#define TESTUTIL_BASE 			0x20000000
+#define	CONSOLE_CHAR_ADDR		0xA0000000
+#define	CONSOLE_NUM_ADDR		0xB0000000
+#define TESTUTIL_BASE 			0xC0000000
 #define TESTUTIL_ADDR_HALT 		(TESTUTIL_BASE)
 #define TESTUTIL_ADDR_BEGIN_SIGNATURE 	(TESTUTIL_BASE + 0x10)
 #define TESTUTIL_ADDR_END_SIGNATURE 	(TESTUTIL_BASE + 0x20)
@@ -142,15 +142,13 @@
 .section .text
 // FN_WriteStr: Add code here to write a string to IO
 // FN_WriteNmbr: Add code here to write a number (32/64bits) to IO
-#define	MEM_CONSOLE_CHAR	DRAM_BASE_ADDR+ADDR_1MiB
-#define	MEM_CONSOLE_NUM		DRAM_BASE_ADDR+ADDR_1MiB+ADDR_1MiB
 
 #define LOCAL_IO_PUTC(_R)                                               \
-    la          t3, MEM_CONSOLE_CHAR;					\
+    la          t3, CONSOLE_CHAR_ADDR;					\
     sw          _R, (0)(t3);						
 
 #define LOCAL_IO_PUTN(_R)                                               \
-    la          t3, MEM_CONSOLE_NUM;					\
+    la          t3, CONSOLE_NUM_ADDR;					\
     sw          _R, (0)(t3);						
 
 
