@@ -2,9 +2,8 @@ OUTPUT_ARCH("riscv")
 ENTRY(rvtest_entry_point)
 
 MEMORY {               
-  DRAM    (rwx) : ORIGIN = 0x10000000, LENGTH = 32K
-  SIG_RAM (rwx) : ORIGIN = 0x20000000, LENGTH = 1K
-  IROM (rx)  	: ORIGIN = 0x80000000, LENGTH = 32K
+  DRAM (rwx) : ORIGIN = 0x10000000, LENGTH = 128K
+  IROM (rx)  : ORIGIN = 0x80000000, LENGTH = 256K
 }
 
 SECTIONS
@@ -20,7 +19,9 @@ SECTIONS
     *(.text)
   } 
 
-  .tohost ALIGN((ORIGIN(DRAM)), 64) : AT(ALIGN((LOADADDR(.text) + SIZEOF(.text)), 64)) {
+  /*Replace by the line below if loader cannot load DRAM*/
+  /*.tohost ALIGN((ORIGIN(DRAM)), 64) : AT(ALIGN((LOADADDR(.text) + SIZEOF(.text)), 64)) {*/
+  .tohost ALIGN((ORIGIN(DRAM)), 64) : AT(ORIGIN(DRAM)) {
     *(.tohost)
   }
 

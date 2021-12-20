@@ -11,6 +11,8 @@
         .align 8; .global end_regstate; end_regstate:                   \
         .word 4;
 
+#define	DRAM_BASE_ADDR			0x10000000
+#define	ADDR_1MiB			0x00100000
 #define TESTUTIL_BASE 			0x20000000
 #define TESTUTIL_ADDR_HALT 		(TESTUTIL_BASE)
 #define TESTUTIL_ADDR_BEGIN_SIGNATURE 	(TESTUTIL_BASE + 0x10)
@@ -38,27 +40,27 @@
   RVMODEL_DATA_SECTION                                                        
 
 
-//RVMODEL_BOOT
-#define RVMODEL_BOOT \
-	.section .text.init; \
-	  la t0, _data_strings; \
-	  la t1, _fstext; \
-	  la t2, _estext; \
-	1: \
-	  lw t3, 0(t0); \
-	  sw t3, 0(t1); \
-	  addi t0, t0, 4; \
-	  addi t1, t1, 4; \
-	  bltu t1, t2, 1b; \
-	  la t0, _data_lma; \
-	  la t1, _data; \
-	  la t2, _edata; \
-	1: \
-	  lw t3, 0(t0); \
-	  sw t3, 0(t1); \
-	  addi t0, t0, 4; \
-	  addi t1, t1, 4; \
-	  bltu t1, t2, 1b;
+#define RVMODEL_BOOT
+//#define RVMODEL_BOOT \
+	//.section .text.init; \
+	  //la t0, _data_strings; \
+	  //la t1, _fstext; \
+	  //la t2, _estext; \
+	//1: \
+	  //lw t3, 0(t0); \
+	  //sw t3, 0(t1); \
+	  //addi t0, t0, 4; \
+	  //addi t1, t1, 4; \
+	  //bltu t1, t2, 1b; \
+	  //la t0, _data_lma; \
+	  //la t1, _data; \
+	  //la t2, _edata; \
+	//1: \
+	  //lw t3, 0(t0); \
+	  //sw t3, 0(t1); \
+	  //addi t0, t0, 4; \
+	  //addi t1, t1, 4; \
+	  //bltu t1, t2, 1b;
 
 // _SP = (volatile register)
 //TODO: Macro to output a string to IO
@@ -140,10 +142,44 @@
 .section .text
 // FN_WriteStr: Add code here to write a string to IO
 // FN_WriteNmbr: Add code here to write a number (32/64bits) to IO
-FN_WriteStr: \
-    ret; \
-FN_WriteNmbr: \
+#define	MEM_CONSOLE_CHAR	DRAM_BASE_ADDR+ADDR_1MiB
+#define	MEM_CONSOLE_NUM		DRAM_BASE_ADDR+ADDR_1MiB+ADDR_1MiB
+
+#define LOCAL_IO_PUTC(_R)                                               \
+    la          t3, MEM_CONSOLE_CHAR;					\
+    sw          _R, (0)(t3);						
+
+#define LOCAL_IO_PUTN(_R)                                               \
+    la          t3, MEM_CONSOLE_NUM;					\
+    sw          _R, (0)(t3);						
+
+
+// FN_WriteStr: Uses a0, t0
+FN_WriteStr:
+    mv          t0, a0;
+10000:
+    lbu         a0, (t0);
+    addi        t0, t0, 1;
+    beq         a0, zero, 10000f;
+    LOCAL_IO_PUTC(a0);
+    j           10000b;
+10000:
     ret;
+
+FN_WriteNmbr:
+    mv          t0, a0;
+20000:
+    lbu         a0, (t0);
+    addi        t0, t0, 1;
+    beq         a0, zero, 20000f;
+    LOCAL_IO_PUTN(a0);
+    j           20000b;
+20000:
+    ret;
+//FN_WriteStr: \
+    //ret; \
+//FN_WriteNmbr: \
+    //ret;
 
 //RVTEST_IO_ASSERT_SFPR_EQ
 #define RVMODEL_IO_ASSERT_SFPR_EQ(_F, _R, _I)

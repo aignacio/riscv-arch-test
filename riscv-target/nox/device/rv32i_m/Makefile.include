@@ -1,5 +1,5 @@
-TARGET_SIM	= $(ROOTDIR)/nox_sim 
-TARGET_FLAGS ?= $(RISCV_TARGET_FLAGS)
+TARGET_SIM      = /home/aignacio/shared/aignacio/projects/nox/output_verilator/nox_sim 
+TARGET_FLAGS   ?= $(RISCV_TARGET_FLAGS)
 
 RISCV_PREFIX   ?= riscv64-unknown-elf-
 RISCV_GCC      ?= $(RISCV_PREFIX)gcc
@@ -36,7 +36,7 @@ COMPILE_TARGET=\
         fi ;
 
 RUN_CMD=\
-	$(TARGET_SIM)
+	$(TARGET_SIM) -s 1000 -e $<
 
 RUN_TARGET=\
 	$(RUN_CMD)
