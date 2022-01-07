@@ -13,8 +13,9 @@ COMPILE_CMD=\
 		-I$(ROOTDIR)/riscv-test-suite/env/ \
 		-I$(TARGETDIR)/$(RISCV_TARGET)/ \
 		-T$(TARGETDIR)/$(RISCV_TARGET)/env/linksplit.ld $$< \
-		-o $$@; \
-	$$(RISCV_OBJCOPY) -O binary $$@ $$@.bin
+		-o $$@ 
+#		-o $$@; \ 
+#		$$(RISCV_OBJCOPY) -O binary $$@ $$@.bin
 
 OBJ_CMD = $$(RISCV_OBJDUMP) $$@ -D > $$@.objdump; \
 		  $$(RISCV_OBJDUMP) $$@ --source > $$@.debug; \
@@ -36,7 +37,7 @@ COMPILE_TARGET=\
         fi ;
 
 RUN_CMD=\
-	$(TARGET_SIM) -s 200000 -e $< +signature=$(*).signature.output
+	$(TARGET_SIM) -s 1000000 -e $< +signature=$(*).signature.output
 
 RUN_TARGET=\
 	$(RUN_CMD)
